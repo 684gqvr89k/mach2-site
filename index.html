@@ -109,10 +109,18 @@
             scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
             padding: 0 24px 24px;
-            scrollbar-width: none;
+            cursor: grab;
         }
 
-        .screenshots-track::-webkit-scrollbar { display: none; }
+        .screenshots-track:active { cursor: grabbing; }
+
+        .screenshots-track::-webkit-scrollbar { height: 6px; }
+        .screenshots-track::-webkit-scrollbar-track { background: transparent; }
+        .screenshots-track::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.15);
+            border-radius: 3px;
+        }
+        .screenshots-track::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
 
         .screenshot-item {
             flex: 0 0 auto;
@@ -198,6 +206,40 @@
             color: var(--fg-muted);
             margin-top: 6px;
         }
+
+        /* ── Beta callout ── */
+        .beta-callout {
+            text-align: center;
+            padding: 0 0 72px;
+        }
+
+        .beta-label {
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--fg-muted);
+            margin-bottom: 8px;
+        }
+
+        .beta-text {
+            font-size: 15px;
+            font-weight: 300;
+            color: var(--fg-dim);
+            margin-bottom: 14px;
+        }
+
+        .beta-link {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--fg);
+            text-decoration: none;
+            border-bottom: 1px solid var(--stroke);
+            padding-bottom: 2px;
+            transition: border-color 0.2s;
+        }
+
+        .beta-link:hover { border-color: var(--fg); }
 
         /* ── Privacy toggle ── */
         .privacy-section {
@@ -328,7 +370,7 @@
     <!-- Hero -->
     <section class="hero">
         <div class="app-icon">
-            <img src="images/iTunesArtwork@3x.png" alt="Mach 2 app icon">
+            <img src="images/app-icon.png" alt="Mach 2 app icon">
         </div>
         <p class="wordmark">Mach 2</p>
         <h1>Metronome</h1>
@@ -394,6 +436,13 @@
     <div class="pricing narrow">
         <p class="price-line"><strong>Free</strong> with optional <strong>$6.99</strong> Pro upgrade</p>
         <p class="price-sub">One-time purchase. No subscription. No ads.</p>
+    </div>
+
+    <!-- Beta callout -->
+    <div class="beta-callout narrow">
+        <p class="beta-label">Public Beta</p>
+        <p class="beta-text">We're refining Mach 2 ahead of launch. Found a bug or have a suggestion?</p>
+        <a href="mailto:hello@mach2metronome.com?subject=Mach%202%20Beta%20Feedback" class="beta-link">Send feedback →</a>
     </div>
 
     <!-- Privacy Policy (collapsible) -->
@@ -481,6 +530,26 @@
     if (window.location.hash === '#privacy') {
         openPrivacy();
     }
+
+    // Desktop drag-to-scroll for screenshots
+    const track = document.querySelector('.screenshots-track');
+    let isDown = false, startX, scrollLeft;
+
+    track.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - track.offsetLeft;
+        scrollLeft = track.scrollLeft;
+    });
+
+    track.addEventListener('mouseleave', () => { isDown = false; });
+    track.addEventListener('mouseup', () => { isDown = false; });
+
+    track.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - track.offsetLeft;
+        track.scrollLeft = scrollLeft - (x - startX);
+    });
 </script>
 
 </body>
