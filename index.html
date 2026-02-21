@@ -3,248 +3,441 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mach 2 — Metronome</title>
-    <meta name="description" content="Mach 2 is a minimal, beautifully designed metronome for iOS. No ads. No subscription. Just precision.">
+    <title>Mach 2 — Precision Metronome for iOS</title>
+    <meta name="description" content="Mach 2 is a precision metronome with a rotational dial, haptic feedback, and beautiful design. No ads. No subscription.">
+    <meta property="og:title" content="Mach 2 — Precision Metronome for iOS">
+    <meta property="og:description" content="Precision metronome, beautifully designed. No ads. No subscription.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mach2metronome.com">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" href="images/app-icon.png">
+    <link rel="apple-touch-icon" href="images/app-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
+        /* ─────────────────────────────────────────
+           TOKENS
+           ───────────────────────────────────────── */
         :root {
-            --bg: #2F2F2F;
-            --bg-deep: #252525;
-            --fg: #FFFFFF;
-            --fg-dim: rgba(255, 255, 255, 0.40);
-            --fg-muted: rgba(255, 255, 255, 0.22);
-            --surface: #3A3A3A;
-            --stroke: rgba(255, 255, 255, 0.10);
+            --text: #1D1D1F;
+            --text-secondary: #86868B;
+            --text-muted: #AEAEB2;
+            --bg: #FFFFFF;
+            --bg-alt: #F5F5F7;
+            --device-color: #1C1C1E;
+            --border: rgba(0, 0, 0, 0.08);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* ─────────────────────────────────────────
+           RESET & BASE
+           ───────────────────────────────────────── */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
 
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            background: var(--bg-deep);
-            color: var(--fg);
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            line-height: 1.5;
         }
 
-        /* ── Container ── */
-        .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
-        .narrow { max-width: 620px; margin: 0 auto; }
+        img { max-width: 100%; height: auto; }
 
-        /* ── Hero ── */
-        .hero {
-            padding: 72px 0 0;
-            text-align: center;
+        ::selection { background: rgba(0, 0, 0, 0.08); }
+
+        /* ─────────────────────────────────────────
+           LAYOUT
+           ───────────────────────────────────────── */
+        .narrow { max-width: 640px; margin: 0 auto; }
+
+        /* ─────────────────────────────────────────
+           CSS DEVICE FRAME (iPhone 15 Pro)
+           ───────────────────────────────────────── */
+        .device {
+            display: inline-block;
+            background: var(--device-color);
+            border-radius: 44px;
+            padding: 10px;
+            box-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.03),
+                0 8px 20px rgba(0, 0, 0, 0.06),
+                0 28px 56px rgba(0, 0, 0, 0.1);
         }
 
-        .app-icon {
-            width: 88px;
-            height: 88px;
-            border-radius: 20px;
+        .device .screen {
+            position: relative;
+            border-radius: 36px;
             overflow: hidden;
-            margin: 0 auto 36px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            background: #000;
         }
 
-        .app-icon img { width: 100%; height: 100%; display: block; }
-
-        .app-type {
-            font-size: clamp(18px, 3.2vw, 26px);
-            font-weight: 400;
-            letter-spacing: 0.28em;
-            text-transform: uppercase;
-            color: var(--fg-dim);
-            margin-bottom: 16px;
+        .device .screen img {
+            display: block;
+            width: 100%;
+            height: auto;
         }
 
-        h1 {
-            font-size: clamp(42px, 7vw, 60px);
+        /* Subtle glass reflection */
+        .device .screen::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                160deg,
+                rgba(255, 255, 255, 0.06) 0%,
+                transparent 38%
+            );
+            pointer-events: none;
+            border-radius: inherit;
+        }
+
+        /* ─────────────────────────────────────────
+           HERO
+           ───────────────────────────────────────── */
+        .hero {
+            text-align: center;
+            padding: 72px 24px 0;
+        }
+
+        .hero-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 6px;
+        }
+
+        .hero-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 13px;
+            overflow: hidden;
+            flex-shrink: 0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-icon img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .hero h1 {
+            font-size: clamp(52px, 9vw, 76px);
             font-weight: 300;
-            line-height: 1.05;
             letter-spacing: -0.03em;
-            margin-bottom: 0;
+            line-height: 1;
         }
 
-        .subtitle {
-            font-size: 16px;
-            font-weight: 300;
-            color: var(--fg-dim);
-            max-width: 340px;
+        .hero-subtitle {
+            font-size: clamp(15px, 2.2vw, 18px);
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .hero-tagline {
+            font-size: 17px;
+            font-weight: 400;
+            color: var(--text-secondary);
             margin: 0 auto;
             line-height: 1.6;
-        }
-
-        /* ── Chips ── */
-        .chips {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            margin-top: 32px;
-            flex-wrap: wrap;
-        }
-
-        .chip {
-            font-size: 12px;
-            font-weight: 400;
-            color: var(--fg-dim);
-            background: var(--surface);
-            border: 1px solid var(--stroke);
-            border-radius: 100px;
-            padding: 5px 14px;
             white-space: nowrap;
         }
 
-        /* ── Screenshot carousel ── */
-        .screenshots-section {
-            padding: 64px 0 0;
+        .hero-sub {
+            font-size: 15px;
+            font-weight: 400;
+            color: var(--text-muted);
+            margin-top: 6px;
         }
 
-        .screenshots-track {
+        .hero-image {
+            margin: 48px auto 0;
             display: flex;
-            gap: 16px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-            padding: 0 24px 24px;
-            cursor: grab;
+            justify-content: center;
         }
 
-        .screenshots-track:active { cursor: grabbing; }
-
-        .screenshots-track::-webkit-scrollbar { height: 6px; }
-        .screenshots-track::-webkit-scrollbar-track { background: transparent; }
-        .screenshots-track::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.15);
-            border-radius: 3px;
-        }
-        .screenshots-track::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
-
-        .screenshot-item {
-            flex: 0 0 auto;
-            scroll-snap-align: center;
-            width: 220px;
-            border-radius: 24px;
-            overflow: hidden;
-            background: var(--surface);
-            box-shadow: 0 4px 24px rgba(0,0,0,0.3);
-            transition: transform 0.3s ease;
-        }
-
-        .screenshot-item img {
-            width: 100%;
+        .hero-image img {
+            width: clamp(360px, 72vw, 820px);
             height: auto;
             display: block;
         }
 
-        .screenshot-item.hero-shot {
-            width: 240px;
+        .chips {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 48px;
+            flex-wrap: wrap;
         }
 
-        /* ── Feature grid ── */
-        .features-section {
-            padding: 72px 0;
+        .chip {
+            font-size: 13px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            background: var(--bg-alt);
+            border-radius: 100px;
+            padding: 6px 16px;
+            white-space: nowrap;
         }
 
-        .section-label {
-            font-size: 11px;
-            font-weight: 500;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--fg-muted);
-            margin-bottom: 20px;
+        /* ─────────────────────────────────────────
+           FEATURE SECTIONS
+           ───────────────────────────────────────── */
+        .feature-section {
+            padding: 120px 24px;
         }
 
-        .features-grid {
+        .feature-section.alt {
+            background: var(--bg-alt);
+        }
+
+        .feature-grid {
+            max-width: 960px;
+            margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 12px;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: center;
         }
 
-        .feature-card {
-            background: var(--surface);
-            border: 1px solid var(--stroke);
-            border-radius: 15px;
-            padding: 20px 22px;
-        }
+        .feature-grid.reverse .feature-text { order: 2; }
+        .feature-grid.reverse .feature-visual { order: 1; }
 
-        .feature-card h3 {
-            font-size: 14px;
-            font-weight: 500;
-            margin-bottom: 6px;
-            color: var(--fg);
-        }
-
-        .feature-card p {
-            font-size: 13px;
-            font-weight: 300;
-            color: var(--fg-dim);
-            line-height: 1.55;
-        }
-
-        /* ── Pricing callout ── */
-        .pricing {
-            text-align: center;
-            padding: 16px 0 72px;
-        }
-
-        .price-line {
-            font-size: 15px;
-            font-weight: 300;
-            color: var(--fg-dim);
-        }
-
-        .price-line strong {
-            color: var(--fg);
-            font-weight: 500;
-        }
-
-        .price-sub {
-            font-size: 13px;
-            color: var(--fg-muted);
-            margin-top: 6px;
-        }
-
-        /* ── Beta callout ── */
-        .beta-callout {
-            text-align: center;
-            padding: 0 0 72px;
-        }
-
-        .beta-label {
-            font-size: 11px;
-            font-weight: 500;
-            letter-spacing: 0.12em;
+        .feature-label {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
-            color: var(--fg-muted);
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .feature-title {
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 600;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+        }
+
+        .feature-desc {
+            font-size: 17px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            max-width: 420px;
+        }
+
+        .feature-visual {
+            display: flex;
+            justify-content: center;
+        }
+
+        .feature-visual .device {
+            max-width: 260px;
+            width: 100%;
+        }
+
+        /* ─────────────────────────────────────────
+           THEME SHOWCASE
+           ───────────────────────────────────────── */
+        .themes-section {
+            padding: 120px 24px;
+            background: var(--bg-alt);
+            text-align: center;
+        }
+
+        .themes-title {
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 600;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+        }
+
+        .themes-desc {
+            font-size: 17px;
+            color: var(--text-secondary);
+            max-width: 380px;
+            margin: 0 auto 56px;
+            line-height: 1.65;
+        }
+
+        .themes-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .themes-grid .device {
+            flex: 0 1 220px;
+        }
+
+        /* Subtle fan effect on the outer devices */
+        .themes-grid .device:first-child {
+            transform: translateY(8px) rotate(-2deg);
+        }
+
+        .themes-grid .device:last-child {
+            transform: translateY(8px) rotate(2deg);
+        }
+
+        /* ─────────────────────────────────────────
+           PRICING
+           ───────────────────────────────────────── */
+        .pricing-section {
+            padding: 120px 24px;
+            text-align: center;
+        }
+
+        .pricing-title {
+            font-size: clamp(24px, 3.5vw, 32px);
+            font-weight: 600;
+            letter-spacing: -0.02em;
             margin-bottom: 8px;
         }
 
-        .beta-text {
-            font-size: 15px;
+        .pricing-desc {
+            font-size: 17px;
+            color: var(--text-secondary);
+            max-width: 460px;
+            margin: 0 auto 48px;
+            line-height: 1.65;
+        }
+
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .price-card {
+            border-radius: 20px;
+            padding: 36px 28px;
+            text-align: left;
+        }
+
+        .price-card.free {
+            background: var(--bg);
+            border: 1px solid var(--border);
+        }
+
+        .price-card.pro {
+            background: var(--text);
+            color: #fff;
+        }
+
+        .price-tier {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            opacity: 0.5;
+            margin-bottom: 4px;
+        }
+
+        .price-amount {
+            font-size: 36px;
             font-weight: 300;
-            color: var(--fg-dim);
-            margin-bottom: 14px;
+            letter-spacing: -0.02em;
+            margin-bottom: 24px;
+        }
+
+        .price-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .price-list li {
+            font-size: 14px;
+            line-height: 1.5;
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .price-list li::before {
+            content: '';
+            flex-shrink: 0;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            margin-top: 7px;
+        }
+
+        .price-card.free .price-list li { color: var(--text-secondary); }
+        .price-card.free .price-list li::before { background: var(--text-muted); }
+
+        .price-card.pro .price-list li { color: rgba(255, 255, 255, 0.75); }
+        .price-card.pro .price-list li::before { background: rgba(255, 255, 255, 0.35); }
+
+        .price-note {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 32px;
+        }
+
+        /* ─────────────────────────────────────────
+           BETA CALLOUT
+           ───────────────────────────────────────── */
+        .beta-section {
+            text-align: center;
+            padding: 80px 24px 96px;
+            border-top: 1px solid var(--border);
+        }
+
+        .beta-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            background: var(--bg-alt);
+            border-radius: 100px;
+            padding: 6px 16px;
+            margin-bottom: 16px;
+        }
+
+        .beta-text {
+            font-size: 17px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.6;
         }
 
         .beta-link {
-            font-size: 14px;
-            font-weight: 400;
-            color: var(--fg);
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text);
             text-decoration: none;
-            border-bottom: 1px solid var(--stroke);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.15);
             padding-bottom: 2px;
             transition: border-color 0.2s;
         }
 
-        .beta-link:hover { border-color: var(--fg); }
+        .beta-link:hover {
+            border-color: var(--text);
+        }
 
-        /* ── Privacy toggle ── */
+        /* ─────────────────────────────────────────
+           PRIVACY (COLLAPSIBLE)
+           ───────────────────────────────────────── */
         .privacy-section {
-            border-top: 1px solid var(--stroke);
-            padding: 48px 0;
+            border-top: 1px solid var(--border);
+            padding: 48px 24px;
         }
 
         .privacy-toggle {
@@ -252,26 +445,26 @@
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
-            padding: 0;
             background: none;
             border: none;
-            color: var(--fg);
+            color: var(--text);
             width: 100%;
             font-family: inherit;
             text-align: left;
+            padding: 0;
         }
 
         .privacy-toggle h2 {
             font-size: 15px;
             font-weight: 400;
-            color: var(--fg-dim);
+            color: var(--text-secondary);
         }
 
-        .privacy-toggle:hover h2 { color: var(--fg); }
+        .privacy-toggle:hover h2 { color: var(--text); }
 
         .privacy-arrow {
             font-size: 18px;
-            color: var(--fg-muted);
+            color: var(--text-muted);
             transition: transform 0.3s ease;
             line-height: 1;
         }
@@ -290,9 +483,7 @@
             opacity: 1;
         }
 
-        .privacy-inner {
-            padding-top: 32px;
-        }
+        .privacy-inner { padding-top: 32px; }
 
         .policy-block { margin-bottom: 24px; }
 
@@ -300,81 +491,176 @@
             font-size: 14px;
             font-weight: 500;
             margin-bottom: 6px;
-            color: var(--fg);
         }
 
         .policy-block p {
             font-size: 14px;
-            font-weight: 300;
-            color: var(--fg-dim);
+            font-weight: 400;
+            color: var(--text-secondary);
             line-height: 1.65;
         }
 
         .policy-block a {
-            color: var(--fg);
+            color: var(--text);
             text-decoration: none;
-            border-bottom: 1px solid var(--stroke);
+            border-bottom: 1px solid var(--border);
         }
 
-        .policy-block a:hover { border-color: var(--fg); }
+        .policy-block a:hover { border-color: var(--text); }
 
         .effective-date {
             font-size: 12px;
-            color: var(--fg-muted);
+            color: var(--text-muted);
             margin-top: 32px;
         }
 
-        /* ── Footer ── */
+        /* ─────────────────────────────────────────
+           FOOTER
+           ───────────────────────────────────────── */
         footer {
-            border-top: 1px solid var(--stroke);
-            padding: 28px 0;
+            border-top: 1px solid var(--border);
+            padding: 28px 24px;
             text-align: center;
         }
 
         footer p {
-            font-size: 12px;
-            font-weight: 300;
-            color: var(--fg-muted);
+            font-size: 13px;
+            color: var(--text-muted);
         }
 
         footer a {
-            color: var(--fg-muted);
+            color: var(--text-muted);
             text-decoration: none;
+            transition: color 0.2s;
         }
 
-        footer a:hover { color: var(--fg-dim); }
+        footer a:hover { color: var(--text-secondary); }
 
-        /* ── Animations ── */
+        /* ─────────────────────────────────────────
+           SCROLL ANIMATIONS
+           ───────────────────────────────────────── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1),
+                        transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-d1 { transition-delay: 0.12s; }
+        .reveal-d2 { transition-delay: 0.24s; }
+
+        /* Hero staggered load */
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(28px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .hero { animation: fadeUp 0.7s ease-out both; }
-        .screenshots-section { animation: fadeUp 0.7s ease-out 0.15s both; }
-        .features-section { animation: fadeUp 0.7s ease-out 0.25s both; }
+        .hero-brand      { animation: fadeUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) both; }
+        .hero-subtitle   { animation: fadeUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.08s both; }
+        .hero-tagline    { animation: fadeUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.16s both; }
+        .hero-sub        { animation: fadeUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.20s both; }
+        .hero-image      { animation: fadeUp 0.9s cubic-bezier(0.25, 1, 0.5, 1) 0.28s both; }
+        .chips           { animation: fadeUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.40s both; }
 
-        /* ── Responsive ── */
-        @media (max-width: 600px) {
-            .screenshot-item { width: 180px; }
-            .screenshot-item.hero-shot { width: 200px; }
-            .features-grid { grid-template-columns: 1fr; }
-            .hero { padding-top: 56px; }
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { opacity: 1; transform: none; transition: none; }
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-delay: 0ms !important;
+            }
+        }
+
+        /* ─────────────────────────────────────────
+           RESPONSIVE
+           ───────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .hero { padding-top: 52px; }
+
+            .hero-brand { gap: 12px; }
+            .hero-icon { width: 44px; height: 44px; border-radius: 10px; }
+
+            .hero-tagline { white-space: normal; }
+
+            .hero-image img { width: clamp(320px, 90vw, 560px); }
+
+            .feature-section { padding: 80px 24px; }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+
+            .feature-grid.reverse .feature-text { order: 1; }
+            .feature-grid.reverse .feature-visual { order: 2; }
+
+            .feature-desc {
+                max-width: 100%;
+                margin: 0 auto;
+            }
+
+            .feature-visual .device { max-width: 220px; }
+
+            .themes-section { padding: 80px 24px; }
+
+            .themes-grid { gap: 12px; }
+
+            .themes-grid .device {
+                flex: 0 1 160px;
+                border-radius: 30px;
+                padding: 7px;
+            }
+
+            .themes-grid .device .screen { border-radius: 24px; }
+
+            .themes-grid .device:first-child { transform: translateY(6px) rotate(-2deg); }
+            .themes-grid .device:last-child { transform: translateY(6px) rotate(2deg); }
+
+            .pricing-section { padding: 80px 24px; }
+
+            .pricing-cards {
+                grid-template-columns: 1fr;
+                max-width: 360px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .device { border-radius: 36px; padding: 8px; }
+            .device .screen { border-radius: 30px; }
+
+            .themes-grid .device {
+                flex: 0 1 130px;
+                border-radius: 24px;
+                padding: 5px;
+            }
+
+            .themes-grid .device .screen { border-radius: 20px; }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-
-    <!-- Hero -->
+    <!-- ══════════════════════════════════════════
+         HERO
+         ══════════════════════════════════════════ -->
     <section class="hero">
-        <div class="app-icon">
-            <img src="images/iTunesArtwork%403x.png" alt="Mach 2 app icon">
+        <div class="hero-brand">
+            <div class="hero-icon">
+                <img src="images/app-icon.png" alt="Mach 2" width="112" height="112">
+            </div>
+            <h1>Mach 2</h1>
         </div>
-        <h1>Mach 2</h1>
-        <p class="app-type">Metronome</p>
-        <p class="subtitle">Minimal. Beautiful. Accurate.<br>No ads. No subscription.</p>
+        <p class="hero-subtitle">Metronome</p>
+        <p class="hero-tagline">Precision metronome, beautifully designed.</p>
+        <p class="hero-sub">No ads. No subscription.</p>
+        <div class="hero-image">
+            <img src="images/web-hero.png" alt="Mach 2 Metronome showing 120 BPM on dark interface with rotational dial" width="4000" height="3000">
+        </div>
         <div class="chips">
             <span class="chip">Rotational dial</span>
             <span class="chip">Haptic feedback</span>
@@ -384,173 +670,233 @@
         </div>
     </section>
 
-    <!-- Screenshots -->
-    <section class="screenshots-section">
-        <div class="screenshots-track">
-            <div class="screenshot-item hero-shot"><img src="images/01-hero-dark-120bpm.png" alt="Mach 2 home screen at 120 BPM"></div>
-            <div class="screenshot-item"><img src="images/04a-teal-72bpm.png" alt="Ocean theme at 72 BPM"></div>
-            <div class="screenshot-item"><img src="images/07-light-mode-80bpm.png" alt="Light mode at 80 BPM"></div>
-            <div class="screenshot-item"><img src="images/02-rhythm-dark.png" alt="Rhythm settings page"></div>
-            <div class="screenshot-item"><img src="images/05-presets-dark.png" alt="Presets and setlists"></div>
-            <div class="screenshot-item"><img src="images/04b-pink-160bpm.png" alt="Custom pink theme at 160 BPM"></div>
-            <div class="screenshot-item"><img src="images/06-theme-customization.png" alt="Theme customization"></div>
-            <div class="screenshot-item"><img src="images/03-practice-arcs.png" alt="Practice mode with arcs"></div>
-            <div class="screenshot-item"><img src="images/08-practice-stats.png" alt="Practice statistics"></div>
-        </div>
-    </section>
-
-    <!-- Features -->
-    <section class="features-section">
-        <div class="narrow">
-            <p class="section-label">Features</p>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <h3>Rotational dial</h3>
-                    <p>A physical-feeling dial interface you won't find in any other metronome. Turn to set BPM with crisp haptic detents.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Haptic-first design</h3>
-                    <p>Feel every beat, every dial click, every interaction. A coherent tactile system from start to finish.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Practice mode</h3>
-                    <p>Automatic bar-based tempo stepping. Set a start and end BPM, choose your step size, and build speed naturally.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>8 click sounds</h3>
-                    <p>From crisp clave to warm cowbell — each synthesized with distinct attack and character.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Presets &amp; setlists</h3>
-                    <p>Save your favourite configurations. Build setlists for rehearsals and gigs with one-tap recall.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Make it yours</h3>
-                    <p>Full theme system with custom colour creation. Light, dark, or match your setup.</p>
+    <!-- ══════════════════════════════════════════
+         FEATURE: THE DIAL
+         ══════════════════════════════════════════ -->
+    <section class="feature-section">
+        <div class="feature-grid">
+            <div class="feature-text reveal">
+                <p class="feature-label">The Interface</p>
+                <h2 class="feature-title">A dial that<br>feels real</h2>
+                <p class="feature-desc">A physical-feeling rotational dial you won't find in any other metronome. Turn to set BPM with crisp haptic detents. Feel every beat, every dial click, every interaction.</p>
+            </div>
+            <div class="feature-visual reveal reveal-d1">
+                <div class="device">
+                    <div class="screen">
+                        <img src="images/03-practice-arcs.png" alt="Practice mode with dial arcs" loading="lazy" width="590" height="1278">
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Pricing -->
-    <div class="pricing narrow">
-        <p class="price-line"><strong>Free</strong> with optional <strong>$6.99</strong> Pro upgrade</p>
-        <p class="price-sub">One-time purchase. No subscription. No ads.</p>
-    </div>
+    <!-- ══════════════════════════════════════════
+         FEATURE: RHYTHM
+         ══════════════════════════════════════════ -->
+    <section class="feature-section alt">
+        <div class="feature-grid reverse">
+            <div class="feature-text reveal">
+                <p class="feature-label">Rhythm</p>
+                <h2 class="feature-title">Every beat,<br>configured</h2>
+                <p class="feature-desc">Time signatures, subdivisions, swing, accent patterns. Auto-stop by bars or minutes. Mute trainer for internalized timing. Practice mode to build speed bar by bar.</p>
+            </div>
+            <div class="feature-visual reveal reveal-d1">
+                <div class="device">
+                    <div class="screen">
+                        <img src="images/02-rhythm-dark.png" alt="Rhythm settings page showing time signature, subdivisions, and practice options" loading="lazy" width="590" height="1278">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- Beta callout -->
-    <div class="beta-callout narrow">
-        <p class="beta-label">Public Beta</p>
+    <!-- ══════════════════════════════════════════
+         FEATURE: PRESETS
+         ══════════════════════════════════════════ -->
+    <section class="feature-section">
+        <div class="feature-grid">
+            <div class="feature-text reveal">
+                <p class="feature-label">Presets</p>
+                <h2 class="feature-title">Your sessions,<br>organized</h2>
+                <p class="feature-desc">Save your favourite configurations. Build setlists for rehearsals and gigs. Swipe to play, hold to reorder. One-tap recall when it counts.</p>
+            </div>
+            <div class="feature-visual reveal reveal-d1">
+                <div class="device">
+                    <div class="screen">
+                        <img src="images/05-presets-dark.png" alt="Presets and setlists page" loading="lazy" width="590" height="1278">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         THEME SHOWCASE
+         ══════════════════════════════════════════ -->
+    <section class="themes-section">
+        <h2 class="themes-title reveal">Make it yours</h2>
+        <p class="themes-desc reveal reveal-d1">Full color customization. Accent colors, backgrounds, and appearance modes.</p>
+        <div class="themes-grid reveal reveal-d2">
+            <div class="device">
+                <div class="screen">
+                    <img src="images/04a-teal-72bpm.png" alt="Teal custom theme at 72 BPM" loading="lazy" width="590" height="1278">
+                </div>
+            </div>
+            <div class="device">
+                <div class="screen">
+                    <img src="images/07-light-mode-80bpm.png" alt="Light mode at 80 BPM" loading="lazy" width="590" height="1278">
+                </div>
+            </div>
+            <div class="device">
+                <div class="screen">
+                    <img src="images/04b-pink-160bpm.png" alt="Pink custom theme at 160 BPM" loading="lazy" width="590" height="1278">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         PRICING
+         ══════════════════════════════════════════ -->
+    <section class="pricing-section">
+        <h2 class="pricing-title reveal">Free to use. Pro when you're ready.</h2>
+        <p class="pricing-desc reveal reveal-d1">Mach 2 works great for free with essential features. Unlock Pro for all sounds, time signatures, subdivisions, themes, and practice tools.</p>
+        <div class="pricing-cards">
+            <div class="price-card free reveal">
+                <p class="price-tier">Free</p>
+                <p class="price-amount">$0</p>
+                <ul class="price-list">
+                    <li>2 click sounds</li>
+                    <li>3 time signatures</li>
+                    <li>Basic subdivisions</li>
+                    <li>2 preset slots</li>
+                    <li>Tap tempo &amp; haptics</li>
+                </ul>
+            </div>
+            <div class="price-card pro reveal reveal-d1">
+                <p class="price-tier">Pro</p>
+                <p class="price-amount">$6.99</p>
+                <ul class="price-list">
+                    <li>8 click sounds</li>
+                    <li>All time signatures</li>
+                    <li>All subdivisions + swing</li>
+                    <li>6 presets + setlists</li>
+                    <li>Auto-stop &amp; mute trainer</li>
+                    <li>Practice mode &amp; stats</li>
+                    <li>Custom themes</li>
+                </ul>
+            </div>
+        </div>
+        <p class="price-note reveal">One-time purchase. No subscription. No ads.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         BETA CALLOUT
+         ══════════════════════════════════════════ -->
+    <section class="beta-section">
+        <span class="beta-badge">Public Beta</span>
         <p class="beta-text">We're refining Mach 2 ahead of launch. Found a bug or have a suggestion?</p>
-        <a href="mailto:hello@mach2metronome.com?subject=Mach%202%20Beta%20Feedback" class="beta-link">Send feedback →</a>
-    </div>
+        <a href="mailto:hello@mach2metronome.com?subject=Mach%202%20Beta%20Feedback" class="beta-link">Send feedback &rarr;</a>
+    </section>
 
-    <!-- Privacy Policy (collapsible) -->
+    <!-- ══════════════════════════════════════════
+         PRIVACY POLICY (COLLAPSIBLE)
+         ══════════════════════════════════════════ -->
     <section class="privacy-section" id="privacy">
         <div class="narrow">
             <button class="privacy-toggle" onclick="togglePrivacy()" aria-expanded="false" aria-controls="privacy-content">
                 <h2>Privacy Policy</h2>
-                <span class="privacy-arrow" id="privacy-arrow">↓</span>
+                <span class="privacy-arrow" id="privacy-arrow">&darr;</span>
             </button>
             <div class="privacy-content" id="privacy-content">
                 <div class="privacy-inner">
-
                     <div class="policy-block">
                         <h3>The short version</h3>
                         <p>Mach 2 does not collect, store, or transmit any personal data. Your practice sessions, presets, and settings stay entirely on your device.</p>
                     </div>
-
                     <div class="policy-block">
                         <h3>Data collection</h3>
                         <p>Mach 2 does not collect any personal information. We do not track your usage, location, or any other data. The app functions entirely offline and requires no account creation or sign-in.</p>
                     </div>
-
                     <div class="policy-block">
                         <h3>Local storage</h3>
-                        <p>All app data — including your BPM settings, presets, practice logs, and theme preferences — is stored locally on your device using Apple's standard frameworks (UserDefaults and SwiftData). This data is never transmitted to any server.</p>
+                        <p>All app data &mdash; including your BPM settings, presets, practice logs, and theme preferences &mdash; is stored locally on your device using Apple's standard frameworks (UserDefaults and SwiftData). This data is never transmitted to any server.</p>
                     </div>
-
                     <div class="policy-block">
                         <h3>In-app purchases</h3>
                         <p>Mach 2 offers an optional one-time Pro upgrade processed entirely through Apple's App Store. We do not have access to your payment information. Apple's own privacy policy governs the transaction.</p>
                     </div>
-
                     <div class="policy-block">
                         <h3>Third-party services</h3>
                         <p>Mach 2 does not integrate any third-party analytics, advertising, or tracking SDKs. No data is shared with third parties.</p>
                     </div>
-
                     <div class="policy-block">
                         <h3>Children's privacy</h3>
                         <p>Mach 2 does not knowingly collect any data from anyone, including children under 13. Since no personal data is collected at all, the app is safe for users of all ages.</p>
                     </div>
-
                     <div class="policy-block">
                         <h3>Changes to this policy</h3>
                         <p>If this privacy policy is ever updated, the changes will be posted on this page with an updated effective date. Since Mach 2 collects no data, meaningful changes are unlikely.</p>
                     </div>
-
                     <div class="policy-block">
                         <h3>Contact</h3>
                         <p>If you have questions about this privacy policy, you can reach us at <a href="mailto:hello@mach2metronome.com">hello@mach2metronome.com</a></p>
                     </div>
-
                     <p class="effective-date">Effective date: February 17, 2026</p>
                 </div>
             </div>
         </div>
     </section>
 
-</div>
+    <!-- ══════════════════════════════════════════
+         FOOTER
+         ══════════════════════════════════════════ -->
+    <footer>
+        <div class="narrow">
+            <p>&copy; 2026 Mach 2 Studio &ensp;&middot;&ensp; <a href="#privacy" onclick="openPrivacy()">Privacy</a></p>
+        </div>
+    </footer>
 
-<footer>
-    <div class="container">
-        <p>© 2026 Mach 2 Studio · <a href="#privacy" onclick="openPrivacy()">Privacy</a></p>
-    </div>
-</footer>
-
-<script>
-    function togglePrivacy() {
-        const content = document.getElementById('privacy-content');
-        const arrow = document.getElementById('privacy-arrow');
-        const toggle = document.querySelector('.privacy-toggle');
-        const isOpen = content.classList.toggle('open');
-        arrow.classList.toggle('open', isOpen);
-        toggle.setAttribute('aria-expanded', isOpen);
-    }
-
-    function openPrivacy() {
-        const content = document.getElementById('privacy-content');
-        if (!content.classList.contains('open')) {
-            togglePrivacy();
+    <!-- ══════════════════════════════════════════
+         SCRIPTS
+         ══════════════════════════════════════════ -->
+    <script>
+        /* Privacy toggle */
+        function togglePrivacy() {
+            const content = document.getElementById('privacy-content');
+            const arrow = document.getElementById('privacy-arrow');
+            const toggle = document.querySelector('.privacy-toggle');
+            const isOpen = content.classList.toggle('open');
+            arrow.classList.toggle('open', isOpen);
+            toggle.setAttribute('aria-expanded', isOpen);
         }
-    }
 
-    // Auto-open if linked directly to #privacy
-    if (window.location.hash === '#privacy') {
-        openPrivacy();
-    }
+        function openPrivacy() {
+            const content = document.getElementById('privacy-content');
+            if (!content.classList.contains('open')) {
+                togglePrivacy();
+            }
+        }
 
-    // Desktop drag-to-scroll for screenshots
-    const track = document.querySelector('.screenshots-track');
-    let isDown = false, startX, scrollLeft;
+        if (window.location.hash === '#privacy') {
+            openPrivacy();
+        }
 
-    track.addEventListener('mousedown', (e) => {
-        isDown = true;
-        startX = e.pageX - track.offsetLeft;
-        scrollLeft = track.scrollLeft;
-    });
+        /* Scroll-reveal observer */
+        const revealObserver = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            },
+            { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+        );
 
-    track.addEventListener('mouseleave', () => { isDown = false; });
-    track.addEventListener('mouseup', () => { isDown = false; });
-
-    track.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - track.offsetLeft;
-        track.scrollLeft = scrollLeft - (x - startX);
-    });
-</script>
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+    </script>
 
 </body>
 </html>
