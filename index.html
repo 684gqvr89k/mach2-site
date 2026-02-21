@@ -390,46 +390,85 @@
         }
 
         /* ─────────────────────────────────────────
-           BETA CALLOUT
+           EMAIL SIGNUP
            ───────────────────────────────────────── */
-        .beta-section {
+        .signup-section {
             text-align: center;
             padding: 80px 24px 96px;
             border-top: 1px solid var(--border);
         }
 
-        .beta-badge {
-            display: inline-block;
-            font-size: 11px;
+        .signup-title {
+            font-size: clamp(24px, 3.5vw, 32px);
             font-weight: 600;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            background: var(--bg-alt);
-            border-radius: 100px;
-            padding: 6px 16px;
-            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
         }
 
-        .beta-text {
+        .signup-desc {
             font-size: 17px;
             color: var(--text-secondary);
-            margin-bottom: 20px;
+            margin-bottom: 32px;
             line-height: 1.6;
         }
 
-        .beta-link {
+        .signup-form {
+            display: flex;
+            max-width: 440px;
+            margin: 0 auto;
+        }
+
+        .signup-form input[type="email"] {
+            flex: 1;
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
             font-size: 15px;
-            font-weight: 500;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-right: none;
+            border-radius: 10px 0 0 10px;
+            outline: none;
             color: var(--text);
-            text-decoration: none;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-            padding-bottom: 2px;
+            background: var(--bg);
             transition: border-color 0.2s;
         }
 
-        .beta-link:hover {
-            border-color: var(--text);
+        .signup-form input[type="email"]:focus {
+            border-color: var(--text-muted);
+        }
+
+        .signup-form input[type="email"]::placeholder {
+            color: var(--text-muted);
+        }
+
+        .signup-form button {
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            padding: 12px 24px;
+            background: var(--text);
+            color: #fff;
+            border: 1px solid var(--text);
+            border-radius: 0 10px 10px 0;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: opacity 0.2s;
+        }
+
+        .signup-form button:hover {
+            opacity: 0.85;
+        }
+
+        .signup-note {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 12px;
+        }
+
+        .signup-success {
+            display: none;
+            font-size: 17px;
+            color: var(--text-secondary);
+            line-height: 1.6;
         }
 
         /* ─────────────────────────────────────────
@@ -627,6 +666,24 @@
                 grid-template-columns: 1fr;
                 max-width: 360px;
             }
+
+            .signup-form {
+                flex-direction: column;
+            }
+
+            .signup-form input[type="email"] {
+                border-right: 1px solid var(--border);
+                border-radius: 10px 10px 0 0;
+                border-bottom: none;
+            }
+
+            .signup-form input[type="email"]:focus {
+                border-color: var(--text-muted);
+            }
+
+            .signup-form button {
+                border-radius: 0 0 10px 10px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -791,12 +848,17 @@
     </section>
 
     <!-- ══════════════════════════════════════════
-         BETA CALLOUT
+         EMAIL SIGNUP
          ══════════════════════════════════════════ -->
-    <section class="beta-section">
-        <span class="beta-badge">Public Beta</span>
-        <p class="beta-text">We're refining Mach 2 ahead of launch. Found a bug or have a suggestion?</p>
-        <a href="mailto:hello@mach2metronome.com?subject=Mach%202%20Beta%20Feedback" class="beta-link">Send feedback &rarr;</a>
+    <section class="signup-section">
+        <h2 class="signup-title">Be the first to know</h2>
+        <p class="signup-desc">Get notified when Mach 2 launches on the App Store.</p>
+        <form class="signup-form" id="signup-form" action="https://tangentloop.substack.com/api/v1/free" method="POST">
+            <input type="email" name="email" placeholder="you@email.com" required>
+            <button type="submit">Notify me</button>
+        </form>
+        <p class="signup-note">No spam. Unsubscribe anytime.</p>
+        <p class="signup-success" id="signup-success">You're on the list. We'll let you know when Mach 2 launches.</p>
     </section>
 
     <!-- ══════════════════════════════════════════
@@ -853,7 +915,7 @@
          ══════════════════════════════════════════ -->
     <footer>
         <div class="narrow">
-            <p>&copy; 2026 Tangent Loop &ensp;&middot;&ensp; <a href="#privacy" onclick="openPrivacy()">Privacy</a></p>
+            <p>&copy; 2026 Tangent Loop &ensp;&middot;&ensp; <a href="#privacy" onclick="openPrivacy()">Privacy</a> &ensp;&middot;&ensp; <a href="mailto:hello@mach2metronome.com?subject=Mach%202%20Feedback">Feedback</a></p>
         </div>
     </footer>
 
@@ -896,6 +958,34 @@
         );
 
         document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        /* Signup form */
+        document.getElementById('signup-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            const email = form.querySelector('input[type="email"]').value;
+            const button = form.querySelector('button');
+            const originalText = button.textContent;
+            button.textContent = 'Sending...';
+            button.disabled = true;
+
+            fetch('https://tangentloop.substack.com/api/v1/free', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, first_url: window.location.href })
+            })
+            .then(function() {
+                form.style.display = 'none';
+                document.querySelector('.signup-note').style.display = 'none';
+                document.getElementById('signup-success').style.display = 'block';
+            })
+            .catch(function() {
+                /* Substack may block CORS — fall back to opening subscription page */
+                window.open('https://tangentloop.substack.com/subscribe?email=' + encodeURIComponent(email), '_blank');
+                button.textContent = originalText;
+                button.disabled = false;
+            });
+        });
     </script>
 
 </body>
