@@ -10,8 +10,10 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://mach2metronome.com">
     <meta name="twitter:card" content="summary_large_image">
-    <link rel="icon" type="image/png" href="images/app-icon.png">
-    <link rel="apple-touch-icon" href="images/app-icon.png">
+    <link rel="icon" href="favicon.ico" sizes="48x48">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -472,6 +474,31 @@
         }
 
         /* ─────────────────────────────────────────
+           SUBSTACK FOLLOW (SECONDARY)
+           ───────────────────────────────────────── */
+        .follow-section {
+            text-align: center;
+            padding: 0 24px 96px;
+        }
+
+        .follow-text {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .follow-text a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-bottom: 1px solid var(--border);
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .follow-text a:hover {
+            color: var(--text);
+            border-color: var(--text);
+        }
+
+        /* ─────────────────────────────────────────
            PRIVACY (COLLAPSIBLE)
            ───────────────────────────────────────── */
         .privacy-section {
@@ -848,17 +875,24 @@
     </section>
 
     <!-- ══════════════════════════════════════════
-         EMAIL SIGNUP
+         BETA SIGNUP (PRIMARY)
          ══════════════════════════════════════════ -->
     <section class="signup-section">
-        <h2 class="signup-title">Be the first to know</h2>
-        <p class="signup-desc">Get notified when Mach 2 launches on the App Store.</p>
-        <form class="signup-form" id="signup-form" action="https://tangentloop.substack.com/api/v1/free" method="POST">
+        <h2 class="signup-title">Try the beta</h2>
+        <p class="signup-desc">Request early access via TestFlight. Be among the first to play with Mach 2.</p>
+        <form class="signup-form" id="beta-form" action="https://formspree.io/f/mqedgqrl" method="POST">
             <input type="email" name="email" placeholder="you@email.com" required>
-            <button type="submit">Notify me</button>
+            <button type="submit">Request access</button>
         </form>
-        <p class="signup-note">No spam. Unsubscribe anytime.</p>
-        <p class="signup-success" id="signup-success">You're on the list. We'll let you know when Mach 2 launches.</p>
+        <p class="signup-note">We'll send you a TestFlight invite.</p>
+        <p class="signup-success" id="beta-success">You're in. Check your email for a TestFlight invite soon.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         SUBSTACK FOLLOW (SECONDARY)
+         ══════════════════════════════════════════ -->
+    <section class="follow-section">
+        <p class="follow-text">Want to follow the project? <a href="https://tangentloop.substack.com" target="_blank" rel="noopener">Subscribe on Substack</a> for behind-the-scenes updates.</p>
     </section>
 
     <!-- ══════════════════════════════════════════
@@ -959,8 +993,8 @@
 
         document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-        /* Signup form */
-        document.getElementById('signup-form').addEventListener('submit', function(e) {
+        /* Beta signup form (Formspree) */
+        document.getElementById('beta-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const form = this;
             const email = form.querySelector('input[type="email"]').value;
@@ -969,20 +1003,22 @@
             button.textContent = 'Sending...';
             button.disabled = true;
 
-            fetch('https://tangentloop.substack.com/api/v1/free', {
+            fetch('https://formspree.io/f/mqedgqrl', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email, first_url: window.location.href })
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ email: email })
             })
-            .then(function() {
-                form.style.display = 'none';
-                document.querySelector('.signup-note').style.display = 'none';
-                document.getElementById('signup-success').style.display = 'block';
+            .then(function(response) {
+                if (response.ok) {
+                    form.style.display = 'none';
+                    document.querySelector('.signup-note').style.display = 'none';
+                    document.getElementById('beta-success').style.display = 'block';
+                } else {
+                    throw new Error('Form submission failed');
+                }
             })
             .catch(function() {
-                /* Substack may block CORS — fall back to opening subscription page */
-                window.open('https://tangentloop.substack.com/subscribe?email=' + encodeURIComponent(email), '_blank');
-                button.textContent = originalText;
+                button.textContent = 'Try again';
                 button.disabled = false;
             });
         });
