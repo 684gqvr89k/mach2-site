@@ -392,110 +392,40 @@
         }
 
         /* ─────────────────────────────────────────
-           EMAIL SIGNUP
+           DOWNLOAD CTA
            ───────────────────────────────────────── */
-        .signup-section {
+        .download-section {
             text-align: center;
             padding: 80px 24px 96px;
             border-top: 1px solid var(--border);
         }
 
-        .signup-title {
+        .download-title {
             font-size: clamp(24px, 3.5vw, 32px);
             font-weight: 600;
             letter-spacing: -0.02em;
             margin-bottom: 8px;
         }
 
-        .signup-desc {
+        .download-desc {
             font-size: 17px;
             color: var(--text-secondary);
             margin-bottom: 32px;
             line-height: 1.6;
         }
 
-        .signup-form {
-            display: flex;
-            max-width: 440px;
-            margin: 0 auto;
-        }
-
-        .signup-form input[type="email"] {
-            flex: 1;
-            font-family: 'Inter', -apple-system, system-ui, sans-serif;
-            font-size: 15px;
-            padding: 12px 16px;
-            border: 1px solid var(--border);
-            border-right: none;
-            border-radius: 10px 0 0 10px;
-            outline: none;
-            color: var(--text);
-            background: var(--bg);
-            transition: border-color 0.2s;
-        }
-
-        .signup-form input[type="email"]:focus {
-            border-color: var(--text-muted);
-        }
-
-        .signup-form input[type="email"]::placeholder {
-            color: var(--text-muted);
-        }
-
-        .signup-form button {
-            font-family: 'Inter', -apple-system, system-ui, sans-serif;
-            font-size: 15px;
-            font-weight: 500;
-            padding: 12px 24px;
-            background: var(--text);
-            color: #fff;
-            border: 1px solid var(--text);
-            border-radius: 0 10px 10px 0;
-            cursor: pointer;
-            white-space: nowrap;
+        .download-badge {
+            display: inline-block;
             transition: opacity 0.2s;
         }
 
-        .signup-form button:hover {
-            opacity: 0.85;
+        .download-badge:hover {
+            opacity: 0.8;
         }
 
-        .signup-note {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-top: 12px;
-        }
-
-        .signup-success {
-            display: none;
-            font-size: 17px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        /* ─────────────────────────────────────────
-           SUBSTACK FOLLOW (SECONDARY)
-           ───────────────────────────────────────── */
-        .follow-section {
-            text-align: center;
-            padding: 0 24px 96px;
-        }
-
-        .follow-text {
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        .follow-text a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            border-bottom: 1px solid var(--border);
-            transition: color 0.2s, border-color 0.2s;
-        }
-
-        .follow-text a:hover {
-            color: var(--text);
-            border-color: var(--text);
+        .download-badge img {
+            height: 54px;
+            width: auto;
         }
 
         /* ─────────────────────────────────────────
@@ -694,23 +624,6 @@
                 max-width: 360px;
             }
 
-            .signup-form {
-                flex-direction: column;
-            }
-
-            .signup-form input[type="email"] {
-                border-right: 1px solid var(--border);
-                border-radius: 10px 10px 0 0;
-                border-bottom: none;
-            }
-
-            .signup-form input[type="email"]:focus {
-                border-color: var(--text-muted);
-            }
-
-            .signup-form button {
-                border-radius: 0 0 10px 10px;
-            }
         }
 
         @media (max-width: 480px) {
@@ -875,24 +788,14 @@
     </section>
 
     <!-- ══════════════════════════════════════════
-         BETA SIGNUP (PRIMARY)
+         DOWNLOAD
          ══════════════════════════════════════════ -->
-    <section class="signup-section">
-        <h2 class="signup-title">Try the beta</h2>
-        <p class="signup-desc">Request early access via TestFlight. Be among the first to play with Mach 2.</p>
-        <form class="signup-form" id="beta-form" action="https://formspree.io/f/mqedgqrl" method="POST">
-            <input type="email" name="email" placeholder="you@email.com" required>
-            <button type="submit">Request access</button>
-        </form>
-        <p class="signup-note">We'll send you a TestFlight invite.</p>
-        <p class="signup-success" id="beta-success">You're in. Check your email for a TestFlight invite soon.</p>
-    </section>
-
-    <!-- ══════════════════════════════════════════
-         SUBSTACK FOLLOW (SECONDARY)
-         ══════════════════════════════════════════ -->
-    <section class="follow-section">
-        <p class="follow-text">Want to follow the project? <a href="https://tangentloop.substack.com" target="_blank" rel="noopener">Subscribe on Substack</a> for behind-the-scenes updates.</p>
+    <section class="download-section">
+        <h2 class="download-title reveal">Available now on the App Store</h2>
+        <p class="download-desc reveal reveal-d1">Free to download. No ads. No subscription.</p>
+        <a href="https://apps.apple.com/us/app/mach-2-metronome/id6759218103" class="download-badge reveal reveal-d2" target="_blank" rel="noopener">
+            <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store">
+        </a>
     </section>
 
     <!-- ══════════════════════════════════════════
@@ -993,35 +896,6 @@
 
         document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-        /* Beta signup form (Formspree) */
-        document.getElementById('beta-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const form = this;
-            const email = form.querySelector('input[type="email"]').value;
-            const button = form.querySelector('button');
-            const originalText = button.textContent;
-            button.textContent = 'Sending...';
-            button.disabled = true;
-
-            fetch('https://formspree.io/f/mqedgqrl', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify({ email: email })
-            })
-            .then(function(response) {
-                if (response.ok) {
-                    form.style.display = 'none';
-                    document.querySelector('.signup-note').style.display = 'none';
-                    document.getElementById('beta-success').style.display = 'block';
-                } else {
-                    throw new Error('Form submission failed');
-                }
-            })
-            .catch(function() {
-                button.textContent = 'Try again';
-                button.disabled = false;
-            });
-        });
     </script>
 
 </body>
